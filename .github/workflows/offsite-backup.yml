@@ -1,0 +1,114 @@
+# Weekly off-Cloudflare copy of the newest backups.
+#
+# Pulse's Sunday 04:00 UTC cron writes D1 exports to R2 `ops-backups` and its own
+# NDJSON backup to `pulse-backups` (both EU jurisdiction, same Cloudflare account).
+# This job copies the newest of each into a GitHub Actions artifact kept 90 days,
+# so a compromised Cloudflare account or deploy token can't delete every copy.
+#
+# Needs repository secret R2_BACKUP_READ_TOKEN (an account API token with only
+# "Workers R2 Storage: Read") and repository variable CF_ACCOUNT_ID. Without them
+# the job skips with a notice. Optional repository variables:
+#   OFFSITE_DATABASES  space-separated D1 databases backed up to ops-backups
+#                      (the list in Settings → Backups); default "pulse"
+#   OFFSITE_REQUIRED   tables that must not be empty after the test restore, as
+#                      "db:table,table db2:table"; default "pulse:events,sites,users"
+#   R2_JURISDICTION    eu (default), fedramp or none
+#
+# Restore: download the artifact from the run page, then follow docs/OPERATIONS.md
+# (disaster recovery). The .sql.gz files are the same D1 exports as in ops-backups.
+name: Off-site backup copy
+
+on:
+  schedule:
+    - cron: "30 6 * * 0" # Sunday 06:30 UTC, after the 04:00 backup cron
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: offsite-backup
+  cancel-in-progress: false
+
+jobs:
+  copy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      ACCOUNT_ID: ${{ vars.CF_ACCOUNT_ID }}
+      DATABASES: ${{ vars.OFFSITE_DATABASES || 'pulse' }}
+      REQUIRED: ${{ vars.OFFSITE_REQUIRED || 'pulse:events,sites,users' }}
+      JURISDICTION: ${{ vars.R2_JURISDICTION || 'eu' }}
+    steps:
+      - name: Download newest backups from R2
+        id: dl
+        env:
+          CF_TOKEN: ${{ secrets.R2_BACKUP_READ_TOKEN }}
+        run: |
+          set -euo pipefail
+          if [ -z "${CF_TOKEN}" ] || [ -z "${ACCOUNT_ID}" ]; then
+            echo "::notice::R2_BACKUP_READ_TOKEN or the CF_ACCOUNT_ID variable is not set; skipping."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          api="https://api.cloudflare.com/client/v4/accounts/${ACCOUNT_ID}/r2/buckets"
+          auth=(-H "Authorization: Bearer ${CF_TOKEN}")
+          if [ "${JURISDICTION}" != "none" ]; then auth+=(-H "cf-r2-jurisdiction: ${JURISDICTION}"); fi
+          list() { # bucket prefix -> keys, one per line
+            curl -fsS "${auth[@]}" "${api}/$1/objects?prefix=$2&per_page=1000" | jq -r '.result[].key'
+          }
+          get() { # bucket key out  (the API returns the object decoded, so gzip it again)
+            local enc; enc=$(jq -rn --arg k "$2" '$k|@uri')
+            curl -fsS "${auth[@]}" "${api}/$1/objects/${enc}" | gzip -9 > "$3"
+          }
+          mkdir -p out/ops-backups out/pulse-backups
+          for db in ${DATABASES}; do
+            key=$(list ops-backups "${db}/" | sort | tail -n1)
+            if [ -z "$key" ]; then echo "::error::no backup under ops-backups/${db}/"; exit 1; fi
+            echo "ops-backups/${key}"
+            get ops-backups "$key" "out/ops-backups/${key//\//__}"
+          done
+          day=$(list pulse-backups "production/" | cut -d/ -f2 | sort -u | tail -n1)
+          for key in $(list pulse-backups "production/${day}/"); do
+            echo "pulse-backups/${key}"
+            get pulse-backups "$key" "out/pulse-backups/${key//\//__}"
+          done
+          # Every file must be valid gzip; the D1 exports must also be non-empty
+          # (NDJSON files of empty tables are legitimately empty).
+          for f in out/*/*; do gzip -t "$f"; done
+          for f in out/ops-backups/*; do [ "$(gzip -dc "$f" | head -c1 | wc -c)" -eq 1 ]; done
+          (cd out && sha256sum */* > SHA256SUMS && cat SHA256SUMS)
+          echo "skip=false" >> "$GITHUB_OUTPUT"
+
+      # Restore drill outside Cloudflare: every D1 export must load into a fresh
+      # SQLite database (foreign keys off, as wrangler exports interleave tables),
+      # pass integrity_check, and give non-empty key tables. This covers pulse,
+      # which is too large for the in-Worker drill.
+      - name: Restore test (SQLite)
+        if: steps.dl.outputs.skip == 'false'
+        run: |
+          set -euo pipefail
+          declare -A must=()
+          for spec in ${REQUIRED}; do must[${spec%%:*}]="${spec#*:}"; must[${spec%%:*}]="${must[${spec%%:*}]//,/ }"; done
+          for f in out/ops-backups/*.sql.gz; do
+            db=$(basename "$f"); db=${db%%__*}
+            rm -f /tmp/r.db; gzip -dc "$f" | sqlite3 -bail /tmp/r.db
+            [ "$(sqlite3 /tmp/r.db 'PRAGMA integrity_check;')" = "ok" ]
+            echo "== ${db}"
+            for t in $(sqlite3 /tmp/r.db "SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%' AND name NOT LIKE '_cf_%' ORDER BY name"); do
+              echo "  ${t} $(sqlite3 /tmp/r.db "SELECT COUNT(*) FROM \"${t}\"")"
+            done
+            for t in ${must[$db]:-}; do
+              n=$(sqlite3 /tmp/r.db "SELECT COUNT(*) FROM \"${t}\"")
+              if [ "$n" -eq 0 ]; then echo "::error::${db}.${t} is empty after restore"; exit 1; fi
+            done
+          done
+
+      - name: Keep as artifact (90 days)
+        if: steps.dl.outputs.skip == 'false'
+        uses: actions/upload-artifact@v4
+        with:
+          name: backups-${{ github.run_id }}
+          path: out/
+          retention-days: 90
+          if-no-files-found: error

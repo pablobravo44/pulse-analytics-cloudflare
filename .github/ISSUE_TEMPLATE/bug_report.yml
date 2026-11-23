@@ -1,0 +1,27 @@
+name: Bug report
+description: Report something broken in Pulse
+labels: ["bug"]
+body:
+  - type: textarea
+    id: summary
+    attributes:
+      label: What happened?
+      description: Describe the bug and what you expected instead.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Open ...
+        2. Run ...
+        3. See error ...
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      description: Self-hosted Cloudflare Workers or local dev? Browser / Node version?
+      placeholder: Cloudflare Workers / Node 22 / Chrome 130

@@ -1,0 +1,117 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  // Top-level config works directly with the "Deploy to Cloudflare" 1-click button and `npm run deploy`
+  // (Cloudflare auto-provisions D1, Queues, KV and R2, and exposes the Worker on *.workers.dev).
+  // For a custom domain, EU jurisdiction and Email Routing, configure .env.deploy and use `npm run deploy:custom`
+  // (which fills env.production below via scripts/deploy-config.mjs).
+  "name": "pulse",
+  "main": "src/worker/index.ts",
+  "compatibility_date": "2026-10-01",
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  "workers_dev": true,
+  "vars": {
+    "ENVIRONMENT": "production"
+  },
+  "assets": {
+    "directory": "dist/public",
+    "binding": "ASSETS",
+    "run_worker_first": true,
+    "not_found_handling": "single-page-application"
+  },
+  "d1_databases": [
+    { "binding": "DB", "database_name": "pulse", "migrations_dir": "migrations" }
+  ],
+  "queues": {
+    "producers": [{ "binding": "EVENTS", "queue": "pulse-events" }],
+    "consumers": [
+      {
+        "queue": "pulse-events",
+        "max_batch_size": 100,
+        "max_batch_timeout": 5,
+        "max_retries": 5,
+        "max_concurrency": 3,
+        "dead_letter_queue": "pulse-events-dlq"
+      },
+      {
+        "queue": "pulse-events-dlq",
+        "max_batch_size": 50,
+        "max_batch_timeout": 30,
+        "max_retries": 0,
+        "max_concurrency": 1
+      }
+    ]
+  },
+  "kv_namespaces": [{ "binding": "OAUTH_KV" }],
+  "r2_buckets": [{ "binding": "BACKUPS", "bucket_name": "pulse-backups" }],
+  "ratelimits": [
+    { "name": "INGEST_LIMITER", "namespace_id": "1101", "simple": { "limit": 120, "period": 60 } },
+    { "name": "API_LIMITER", "namespace_id": "1102", "simple": { "limit": 600, "period": 60 } },
+    { "name": "LOGIN_LIMITER", "namespace_id": "1103", "simple": { "limit": 20, "period": 60 } }
+  ],
+  "triggers": { "crons": ["*/5 * * * *", "0 3 * * *", "0 4 * * SUN", "0 5 1 * *"] },
+  "observability": { "enabled": true, "head_sampling_rate": 0.1 },
+  "limits": { "cpu_ms": 300000 },
+
+  "env": {
+    // Custom-domain deployment. Don't write your values here: the ${PULSE_*} placeholders are filled from build
+    // variables (or a local .env.deploy) by `node scripts/deploy-config.mjs`, which writes wrangler.deploy.jsonc
+    // for `npm run deploy:custom`. docs/SELF-HOSTING.md lists every variable.
+    "production": {
+      "name": "pulse",
+      // The custom domain is the only host: no *.workers.dev URL that would skip its settings.
+      "workers_dev": false,
+      "preview_urls": false,
+      "vars": {
+        "ENVIRONMENT": "production",
+        "PUBLIC_ORIGIN": "https://${PULSE_DOMAIN}",
+        "RP_ID": "${PULSE_DOMAIN}",
+        // Sender of alert and report emails (a domain with Email Routing on); without it, alerts@<your domain>.
+        "ALERT_FROM": "${PULSE_ALERT_FROM}",
+        // Cloudflare Access sign-in (src/worker/auth/access.ts): the Access app guards /auth/access only. The first
+        // owners' emails are the ACCESS_EMAILS secret (wrangler secret put ACCESS_EMAILS).
+        "ACCESS_TEAM_DOMAIN": "${PULSE_ACCESS_TEAM_DOMAIN}",
+        "ACCESS_AUD": "${PULSE_ACCESS_AUD}",
+        // Optional: the account the ops token works on, when it can see more than one.
+        "CF_ACCOUNT_ID": "${PULSE_ACCOUNT_ID}"
+      },
+      "routes": [{ "pattern": "${PULSE_DOMAIN}", "custom_domain": true }],
+      "assets": {
+        "directory": "dist/public",
+        "binding": "ASSETS",
+        "run_worker_first": true,
+        "not_found_handling": "single-page-application"
+      },
+      "d1_databases": [{ "binding": "DB", "database_name": "pulse", "database_id": "${PULSE_D1_ID}", "migrations_dir": "migrations" }],
+      "queues": {
+        "producers": [{ "binding": "EVENTS", "queue": "pulse-events" }],
+        "consumers": [
+          {
+            "queue": "pulse-events",
+            "max_batch_size": 100,
+            "max_batch_timeout": 5,
+            "max_retries": 5,
+            "max_concurrency": 3,
+            "dead_letter_queue": "pulse-events-dlq"
+          },
+          { "queue": "pulse-events-dlq", "max_batch_size": 50, "max_batch_timeout": 30, "max_retries": 0, "max_concurrency": 1 }
+        ]
+      },
+      "kv_namespaces": [{ "binding": "OAUTH_KV", "id": "${PULSE_KV_ID}" }],
+      // PULSE_JURISDICTION (default eu) sets both buckets' jurisdiction; PULSE_OPS_BACKUPS=false drops ops-backups.
+      "r2_buckets": [
+        { "binding": "BACKUPS", "bucket_name": "pulse-backups", "jurisdiction": "eu" },
+        { "binding": "OPS_BACKUPS", "bucket_name": "ops-backups", "jurisdiction": "eu" }
+      ],
+      // Alert and report emails, to verified Email Routing destinations; PULSE_ALERT_TO pins one address.
+      "send_email": [{ "name": "SEND_EMAIL", "destination_address": "${PULSE_ALERT_TO}" }],
+      "ratelimits": [
+        { "name": "INGEST_LIMITER", "namespace_id": "1101", "simple": { "limit": 120, "period": 60 } },
+        { "name": "API_LIMITER", "namespace_id": "1102", "simple": { "limit": 600, "period": 60 } },
+        { "name": "LOGIN_LIMITER", "namespace_id": "1103", "simple": { "limit": 20, "period": 60 } }
+      ],
+      "triggers": { "crons": ["*/5 * * * *", "0 3 * * *", "0 4 * * SUN", "0 5 1 * *"] },
+      "observability": { "enabled": true, "head_sampling_rate": 0.1 },
+      "limits": { "cpu_ms": 300000 }
+    }
+  }
+}

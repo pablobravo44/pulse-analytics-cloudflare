@@ -1,0 +1,23 @@
+# Z8: security updates only (no version-update PRs, to keep build minutes low).
+# Security PRs come from the repo's Dependabot security updates setting; this file groups them and
+# sets open-pull-requests-limit 0, which disables routine version updates.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 0
+    groups:
+      security:
+        applies-to: security-updates
+        patterns: ["*"]
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 0
+    groups:
+      security:
+        applies-to: security-updates
+        patterns: ["*"]

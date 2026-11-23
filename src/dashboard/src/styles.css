@@ -1,0 +1,846 @@
+@import "tailwindcss";
+@import "uplot/dist/uPlot.min.css";
+@import "@fontsource-variable/bricolage-grotesque/standard.css";
+@import "@fontsource-variable/instrument-sans/wdth.css";
+
+/*
+ * "Señales": every site is a signal with its own validated hue (--s1…--s12, chosen per site, never by position);
+ * everything else is quiet ink on fog. Green and red are reserved for state and always come with an arrow or icon.
+ * Site palette validated in light and dark (contrast ≥ 3:1 on surface and fog);
+ * text tokens checked for 4.5:1 on surface and fog (docs/DESIGN.md).
+ */
+:root {
+  color-scheme: light;
+  --fog: #f3f4f7;
+  --surface: #ffffff;
+  --raised: #fafbfc;
+  --ink: #171a2e;
+  --ink-2: #565b73;
+  --ink-3: #676c83;
+  --line: #e4e6ed;
+  --line-2: #eef0f4;
+  --line-strong: #d3d6e0;
+  --ghost: #a9adbd;
+  --good: #15703b;
+  --bad: #b52d2d;
+  --warn: #8f5200;
+  --s1: #7357f6;
+  --s2: #0b9da4;
+  --s3: #d2700a;
+  --s4: #d6409f;
+  --s5: #3e7bfa;
+  --s6: #7e8d12;
+  --s7: #d9503a;
+  --s8: #4350d4;
+  --s9: #108f62;
+  --s10: #993fb8;
+  --s11: #0381c2;
+  --s12: #52607a;
+  --shadow: 0 18px 40px -18px rgba(23, 26, 46, 0.35), 0 2px 6px rgba(23, 26, 46, 0.06);
+  --hover: rgba(23, 26, 46, 0.045);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --fog: #0f1120;
+    --surface: #171a2c;
+    --raised: #1c1f33;
+    --ink: #edeef6;
+    --ink-2: #a8acc2;
+    --ink-3: #8d92ab;
+    --line: #2a2e45;
+    --line-2: #22253a;
+    --line-strong: #383d58;
+    --ghost: #555a75;
+    --good: #4cc584;
+    --bad: #f07272;
+    --warn: #e8a948;
+    --s1: #8a70ff;
+    --s2: #1da9af;
+    --s3: #c97414;
+    --s4: #db4fa6;
+    --s5: #5a8bf5;
+    --s6: #8a9a24;
+    --s7: #f06d57;
+    --s8: #6e7cf2;
+    --s9: #28b582;
+    --s10: #bc6ad9;
+    --s11: #35a4e3;
+    --s12: #8594b2;
+    --shadow: 0 18px 40px -18px rgba(0, 0, 0, 0.8), 0 2px 6px rgba(0, 0, 0, 0.4);
+    --hover: rgba(237, 238, 246, 0.05);
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --fog: #0f1120;
+  --surface: #171a2c;
+  --raised: #1c1f33;
+  --ink: #edeef6;
+  --ink-2: #a8acc2;
+  --ink-3: #8d92ab;
+  --line: #2a2e45;
+  --line-2: #22253a;
+  --line-strong: #383d58;
+  --ghost: #555a75;
+  --good: #4cc584;
+  --bad: #f07272;
+  --warn: #e8a948;
+  --s1: #8a70ff;
+  --s2: #1da9af;
+  --s3: #c97414;
+  --s4: #db4fa6;
+  --s5: #5a8bf5;
+  --s6: #8a9a24;
+  --s7: #f06d57;
+  --s8: #6e7cf2;
+  --s9: #28b582;
+  --s10: #bc6ad9;
+  --s11: #35a4e3;
+  --s12: #8594b2;
+  --shadow: 0 18px 40px -18px rgba(0, 0, 0, 0.8), 0 2px 6px rgba(0, 0, 0, 0.4);
+  --hover: rgba(237, 238, 246, 0.05);
+}
+
+/*
+ * The site's hue and its tints. Declared at the root (neutral ink outside a site) and again on every element that
+ * sets data-site, so the tints follow that element's --site (custom properties resolve where they are declared).
+ */
+:root,
+[data-site] {
+  --site-tint: color-mix(in oklab, var(--site, var(--ink-2)) 13%, transparent);
+  --site-tint-strong: color-mix(in oklab, var(--site, var(--ink-2)) 24%, transparent);
+  --site-soft: color-mix(in oklab, var(--site, var(--ink-2)) 8%, var(--surface));
+  --site-ink: color-mix(in oklab, var(--site, var(--ink-2)) 70%, var(--ink));
+}
+[data-site="s1"] {
+  --site: var(--s1);
+}
+[data-site="s2"] {
+  --site: var(--s2);
+}
+[data-site="s3"] {
+  --site: var(--s3);
+}
+[data-site="s4"] {
+  --site: var(--s4);
+}
+[data-site="s5"] {
+  --site: var(--s5);
+}
+[data-site="s6"] {
+  --site: var(--s6);
+}
+[data-site="s7"] {
+  --site: var(--s7);
+}
+[data-site="s8"] {
+  --site: var(--s8);
+}
+[data-site="s9"] {
+  --site: var(--s9);
+}
+[data-site="s10"] {
+  --site: var(--s10);
+}
+[data-site="s11"] {
+  --site: var(--s11);
+}
+[data-site="s12"] {
+  --site: var(--s12);
+}
+
+:root {
+  /* Motion: quick for hover/focus/tabs, base for menus and drawers, data for numbers, curves and bars. */
+  --motion-quick: 120ms ease-out;
+  --motion-base: 220ms cubic-bezier(0.2, 0.7, 0.2, 1);
+  --motion-data: 480ms cubic-bezier(0.2, 0.7, 0.2, 1);
+  --ease-data: cubic-bezier(0.2, 0.7, 0.2, 1);
+  /* Older names, kept so existing components follow the new tokens. */
+  --paper: var(--fog);
+  --sheet: var(--surface);
+  --rule: var(--line);
+  --grid-minor: var(--line-2);
+  --grid-major: var(--line-strong);
+  --pencil: var(--ghost);
+  --up: var(--good);
+  --live: var(--good);
+  --down: var(--bad);
+  --focus: var(--site, var(--ink));
+  --pen-blue: var(--s5);
+  --pen-red: var(--bad);
+  --pen-green: var(--good);
+  --pen-violet: var(--s1);
+}
+:root,
+[data-site] {
+  --mark: var(--site-tint-strong);
+  --mark-soft: var(--site-tint);
+  --bar: var(--site-tint);
+  --bar-strong: var(--site-tint-strong);
+}
+
+/* Tab rows scroll sideways on narrow columns instead of wrapping. */
+@utility no-scrollbar {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Wide desktops get a third column of report panels. */
+@theme {
+  --breakpoint-3xl: 110rem;
+}
+
+@theme inline {
+  --color-paper: var(--paper);
+  --color-sheet: var(--sheet);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-ink-3: var(--ink-3);
+  --color-rule: var(--rule);
+  --color-grid-minor: var(--grid-minor);
+  --color-grid-major: var(--grid-major);
+  --color-pencil: var(--pencil);
+  --color-mark: var(--mark);
+  --color-mark-soft: var(--mark-soft);
+  --color-bar: var(--bar);
+  --color-bar-strong: var(--bar-strong);
+  --color-hover: var(--hover);
+  --color-up: var(--up);
+  --color-live: var(--live);
+  --color-down: var(--down);
+  --color-warn: var(--warn);
+  --color-fog: var(--fog);
+  --color-surface: var(--surface);
+  --color-raised: var(--raised);
+  --color-line: var(--line);
+  --color-line-2: var(--line-2);
+  --color-line-strong: var(--line-strong);
+  --color-ghost: var(--ghost);
+  --color-good: var(--good);
+  --color-bad: var(--bad);
+  --color-site: var(--site, var(--ink-2));
+  --color-site-tint: var(--site-tint);
+  --color-site-soft: var(--site-soft);
+  --color-s1: var(--s1);
+  --color-s2: var(--s2);
+  --color-s3: var(--s3);
+  --color-s4: var(--s4);
+  --color-s5: var(--s5);
+  --color-s6: var(--s6);
+  --color-s7: var(--s7);
+  --color-s8: var(--s8);
+  --color-s9: var(--s9);
+  --color-s10: var(--s10);
+  --color-s11: var(--s11);
+  --color-s12: var(--s12);
+  --font-sans: "Instrument Sans Variable", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-display: "Bricolage Grotesque Variable", "Instrument Sans Variable", system-ui, sans-serif;
+  --radius-panel: 16px;
+  --radius-row: 8px;
+}
+
+html,
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 20px;
+  -webkit-font-smoothing: antialiased;
+  font-variant-numeric: tabular-nums;
+}
+::selection {
+  background: var(--site-tint-strong);
+  color: var(--ink);
+}
+/* Paragraphs keep a readable measure, however wide the column. */
+p {
+  max-width: 72ch;
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+@layer components {
+  /* Type: Bricolage Grotesque for figures and titles (condensed for numbers, optical size for headings), Instrument
+   Sans for everything else. Tabular figures everywhere so columns don't dance. */
+  .t-display,
+  .t-wide {
+    font-family: var(--font-display);
+    font-optical-sizing: auto;
+    letter-spacing: -0.015em;
+  }
+  .t-num {
+    font-family: var(--font-display);
+    font-variation-settings:
+      "wdth" 80,
+      "opsz" 24;
+    font-variant-numeric: tabular-nums;
+  }
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+  .t-title {
+    font-family: var(--font-display);
+    font-size: 30px;
+    line-height: 36px;
+    font-weight: 700;
+    font-variation-settings: "opsz" 96;
+    letter-spacing: -0.025em;
+  }
+  .t-heading {
+    font-size: 15px;
+    line-height: 22px;
+    font-weight: 650;
+    letter-spacing: -0.005em;
+  }
+  .t-readout {
+    font-family: var(--font-display);
+    font-size: 34px;
+    line-height: 38px;
+    font-weight: 700;
+    font-variation-settings:
+      "wdth" 78,
+      "opsz" 72;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.03em;
+  }
+
+  /* Chart backdrop: a clean surface (the grid lines are the chart's own, three and faint). */
+  .paper-grid {
+    background-color: var(--surface);
+  }
+  /* Radii have a hierarchy: panels 16, rows 8, chips round. No shadow at rest; only what floats casts one. */
+  .sheet,
+  .panel {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-panel);
+  }
+  /* A section's prose lines up with its heading and its rows (both inset by 0.5rem inside the panel's padding). */
+  section.panel > p,
+  section.panel > .section-prose {
+    padding-inline: 0.5rem;
+  }
+  .floating {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+  }
+
+  /* Controls */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-height: 34px;
+    padding: 0 12px;
+    border-radius: 10px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--ink);
+    font-size: 13.5px;
+    font-weight: 500;
+    white-space: nowrap;
+    cursor: pointer;
+    transition:
+      background-color var(--motion-quick),
+      border-color var(--motion-quick);
+  }
+  .btn:hover {
+    background: var(--hover);
+    border-color: var(--grid-major);
+  }
+  .btn:disabled,
+  .btn[aria-disabled="true"] {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  .btn-primary {
+    background: var(--ink);
+    border-color: var(--ink);
+    color: var(--paper);
+  }
+  .btn-primary:hover {
+    background: var(--ink);
+    border-color: var(--ink);
+    opacity: 0.9;
+  }
+  .btn-quiet {
+    border-color: transparent;
+    background: transparent;
+  }
+  .btn-quiet:hover {
+    background: var(--hover);
+    border-color: transparent;
+  }
+  .btn-danger {
+    color: var(--down);
+  }
+  .btn-sm {
+    min-height: 28px;
+    padding: 0 8px;
+    font-size: 13px;
+  }
+  .input {
+    min-height: 34px;
+    padding: 0 10px;
+    border-radius: 10px;
+    border: 1px solid var(--rule);
+    background: var(--sheet);
+    color: var(--ink);
+    font-size: 14px;
+    width: 100%;
+  }
+  .input:hover {
+    border-color: var(--grid-major);
+  }
+  .input::placeholder {
+    color: var(--ink-3);
+  }
+  textarea.input {
+    padding: 8px 10px;
+    min-height: 72px;
+  }
+  select.input {
+    padding-right: 28px;
+    appearance: none;
+    background-image:
+      linear-gradient(45deg, transparent 50%, var(--ink-2) 50%),
+      linear-gradient(135deg, var(--ink-2) 50%, transparent 50%);
+    background-position:
+      calc(100% - 14px) 50%,
+      calc(100% - 9px) 50%;
+    background-size: 5px 5px;
+    background-repeat: no-repeat;
+  }
+  .check {
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    border: 1px solid var(--grid-major);
+    border-radius: 4px;
+    background: var(--sheet);
+    display: inline-grid;
+    place-content: center;
+    flex: none;
+    cursor: pointer;
+  }
+  .check:checked {
+    background: var(--ink);
+    border-color: var(--ink);
+  }
+  .check:checked::after {
+    content: "";
+    width: 8px;
+    height: 5px;
+    border-left: 2px solid var(--paper);
+    border-bottom: 2px solid var(--paper);
+    transform: translateY(-1px) rotate(-45deg);
+  }
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    min-height: 26px;
+    padding: 0 10px;
+    border-radius: 999px;
+    background: var(--line-2);
+    border: 1px solid var(--line);
+    color: var(--ink);
+    font-size: 12.5px;
+    line-height: 16px;
+  }
+  .chip-mark {
+    background: var(--site-tint);
+    border-color: color-mix(in oklab, var(--site, var(--ink-2)) 30%, transparent);
+  }
+
+  /* Segmented control: one click between a few options (ranges, intervals, themes). */
+  .seg {
+    display: inline-flex;
+    padding: 3px;
+    gap: 2px;
+    border-radius: 11px;
+    background: var(--line-2);
+    border: 1px solid var(--line);
+  }
+  .seg > button,
+  .seg > a {
+    padding: 4px 11px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink-2);
+    white-space: nowrap;
+    cursor: pointer;
+    transition:
+      background-color var(--motion-quick),
+      color var(--motion-quick);
+  }
+  /* Icon-sized segments (the sidebar's language and theme). */
+  .seg.seg-compact {
+    padding: 2px;
+    border-radius: 9px;
+  }
+  .seg.seg-compact > button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    min-width: 30px;
+    height: 26px;
+    padding: 0 7px;
+    border-radius: 7px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .seg > [aria-pressed="true"],
+  .seg > [aria-checked="true"],
+  .seg > [aria-current="page"] {
+    background: var(--surface);
+    color: var(--ink);
+    box-shadow:
+      0 1px 2px rgba(0, 0, 0, 0.08),
+      0 0 0 1px var(--line);
+  }
+
+  /* Change against the comparison: colour plus an arrow, never colour alone. */
+  .delta {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    padding: 1px 6px;
+    border-radius: 6px;
+    font-size: 12.5px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+  .delta-up {
+    color: var(--good);
+    background: color-mix(in oklab, var(--good) 11%, transparent);
+  }
+  .delta-down {
+    color: var(--bad);
+    background: color-mix(in oklab, var(--bad) 11%, transparent);
+  }
+  .delta-flat {
+    color: var(--ink-2);
+    background: var(--line-2);
+  }
+
+  /* The site's swatch (sidebar, cards, legends). */
+  .swatch {
+    width: 10px;
+    height: 10px;
+    border-radius: 3px;
+    flex: none;
+    background: var(--site, var(--ink-2));
+  }
+  .link {
+    color: var(--ink);
+    text-decoration: underline;
+    text-decoration-color: var(--grid-major);
+    text-underline-offset: 3px;
+  }
+  .link:hover {
+    text-decoration-color: var(--ink);
+  }
+  .row-hover:hover,
+  .row-hover:focus-visible {
+    background: var(--hover);
+  }
+
+  /* A panel's heading row: title on the left, tabs and actions on the right. */
+  .section-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding-bottom: 6px;
+    margin-bottom: 4px;
+  }
+}
+
+.skeleton {
+  background: linear-gradient(90deg, var(--bar), var(--bar-strong), var(--bar));
+  background-size: 200% 100%;
+  animation: sk 1.4s ease-in-out infinite;
+  border-radius: 8px;
+}
+@keyframes sk {
+  to {
+    background-position: -200% 0;
+  }
+}
+
+/* Motion: one orchestrated moment (the trace draws once), plus responses to actions. */
+@keyframes draw {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+.trace-draw canvas {
+  animation: draw 700ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+@keyframes beat {
+  0% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--live) 55%, transparent);
+  }
+  100% {
+    box-shadow: 0 0 0 8px transparent;
+  }
+}
+.live-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--live);
+}
+.live-dot.beat {
+  animation: beat 900ms ease-out 1;
+}
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes slide-in {
+  from {
+    opacity: 0;
+    transform: translateX(16px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.anim-pop[data-state="open"] {
+  animation: rise 140ms ease-out;
+}
+.anim-sheet[data-state="open"] {
+  animation: slide-in 160ms ease-out;
+}
+.anim-fade[data-state="open"] {
+  animation: fade 140ms ease-out;
+}
+/* Responses to actions: bars grow when a list (re)appears, the tab mark slides, a changed number ticks in,
+   a new page settles in. */
+@keyframes grow {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+/* Bars ease to their new width when the data changes (no entrance animation: lists don't cascade in). */
+.bar-fill {
+  transition: width var(--motion-data);
+}
+.tab-mark {
+  transition:
+    transform 220ms cubic-bezier(0.2, 0.7, 0.2, 1),
+    width 220ms cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+@keyframes tick {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.anim-tick {
+  display: inline-block;
+  animation: tick 260ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+@keyframes settle {
+  from {
+    opacity: 0;
+    transform: translateY(3px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.anim-page {
+  animation: settle 200ms ease-out both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .bar-fill,
+  .anim-tick,
+  .anim-page {
+    animation: none;
+  }
+  .bar-fill,
+  .tab-mark {
+    transition: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton,
+  .trace-draw canvas,
+  .live-dot.beat,
+  .anim-pop[data-state="open"],
+  .anim-sheet[data-state="open"],
+  .anim-fade[data-state="open"] {
+    animation: none;
+  }
+}
+
+/* Status day cells */
+.day-cells {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(2px, 1fr);
+  gap: 1px;
+  height: 22px;
+  align-items: stretch;
+}
+.day-cells > span {
+  border-radius: 1px;
+}
+
+/* uPlot chrome in tokens */
+.uplot {
+  font-family: var(--font-sans);
+}
+.u-legend {
+  display: none;
+}
+.u-cursor-x {
+  border-right: 1px dashed var(--pencil) !important;
+}
+.chart-tip {
+  position: absolute;
+  pointer-events: none;
+  z-index: 10;
+  background: var(--sheet);
+  color: var(--ink);
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-size: 13px;
+  box-shadow: var(--shadow);
+  white-space: nowrap;
+}
+
+/* New numbers on the way (same site, other range or filter): the old ones dim and a thin line runs along the top. */
+.updating-host {
+  position: relative;
+  transition: opacity 120ms ease-out;
+}
+.updating-host.is-updating {
+  opacity: 0.55;
+}
+.updating-host.is-updating::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 2px;
+  z-index: 1;
+  background: linear-gradient(90deg, transparent, var(--ink), transparent) no-repeat;
+  background-size: 40% 100%;
+  animation: updating-slide 900ms linear infinite;
+}
+@keyframes updating-slide {
+  from {
+    background-position: -40% 0;
+  }
+  to {
+    background-position: 140% 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .updating-host,
+  .updating-host.is-updating::before {
+    transition: none;
+    animation: none;
+  }
+}
+
+/* The live dot breathes slowly while someone is on the site (and beats once per new visit, .beat). */
+@keyframes breathe {
+  0% {
+    box-shadow: 0 0 0 0 color-mix(in oklab, var(--good) 55%, transparent);
+  }
+  70%,
+  100% {
+    box-shadow: 0 0 0 7px transparent;
+  }
+}
+.live-dot.breathe {
+  animation: breathe 2.4s ease-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .live-dot.breathe {
+    animation: none;
+  }
+}
+
+/* Page changes: a short cross-fade; a site's name (view-transition-name site-<id>) travels from its card to its header. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 200ms;
+}
+::view-transition-group(*) {
+  animation-duration: 220ms;
+  animation-timing-function: cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+  .anim-pop[data-state="open"],
+  .anim-sheet[data-state="open"],
+  .anim-fade[data-state="open"],
+  .updating-host,
+  .bar-fill {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+/* Reduced motion: nothing moves or fades, anywhere (state changes apply at once). */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0s !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0s !important;
+    transition-delay: 0s !important;
+  }
+}

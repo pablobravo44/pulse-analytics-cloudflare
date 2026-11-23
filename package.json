@@ -1,0 +1,118 @@
+{
+  "name": "pulse-analytics-cloudflare",
+  "version": "0.1.0",
+  "description": "Self-hosted, cookieless web analytics with uptime checks, REST API, and an 83-tool MCP server on Cloudflare Workers and D1.",
+  "private": true,
+  "license": "MIT",
+  "homepage": "https://pablobravo44.github.io/pulse-analytics-cloudflare/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pablobravo44/pulse-analytics-cloudflare.git"
+  },
+  "bugs": {
+    "url": "https://github.com/pablobravo44/pulse-analytics-cloudflare/issues"
+  },
+  "cloudflare": {
+    "bindings": {
+      "ACCESS_EMAILS": {
+        "description": "Comma-separated owner email addresses allowed to sign in via Cloudflare Access."
+      },
+      "PULSE_SECRET_KEY": {
+        "description": "32 random bytes (base64) used to encrypt Slack, Discord, Telegram, ntfy and webhook channel secrets."
+      },
+      "ALERT_EMAIL": {
+        "description": "Verified Cloudflare Email Routing address for error alerts and scheduled reports."
+      }
+    }
+  },
+  "keywords": [
+    "analytics",
+    "cookieless",
+    "privacy",
+    "cloudflare-workers",
+    "d1",
+    "uptime",
+    "mcp",
+    "self-hosted"
+  ],
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json --noEmit && tsc -p tsconfig.tracker.json --noEmit && tsc -p src/dashboard/tsconfig.json --noEmit",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "test": "vitest run --config vitest.config.ts",
+    "test:integration": "vitest run --config vitest.integration.config.ts",
+    "test:e2e": "playwright test",
+    "build": "npm run build:dashboard && npm run build:tracker && node scripts/deploy-config.mjs --ci",
+    "build:tracker": "node scripts/build-tracker.mjs",
+    "build:dashboard": "vite build --config src/dashboard/vite.config.ts",
+    "dev:dashboard": "vite --config src/dashboard/vite.config.ts",
+    "tracker:size": "node scripts/tracker-size.mjs",
+    "admin": "node --experimental-strip-types scripts/admin.ts",
+    "smoke": "node scripts/smoke.mjs",
+    "restore:order": "node --experimental-strip-types scripts/restore-order.ts",
+    "loadtest": "node --experimental-strip-types scripts/loadtest.ts",
+    "dev:api": "node --import ./scripts/dev/register.mjs scripts/dev/server.ts",
+    "dev:seed": "node --import ./scripts/dev/register.mjs scripts/dev/seed.ts",
+    "dev": "node scripts/dev/run.mjs",
+    "openapi:lint": "npx @redocly/cli@2 lint dist/openapi.json",
+    "deploy:config": "node scripts/deploy-config.mjs",
+    "deploy": "wrangler d1 migrations apply DB --remote && wrangler deploy",
+    "deploy:custom": "node scripts/deploy-config.mjs && wrangler d1 migrations apply pulse --remote -c wrangler.deploy.jsonc --env production && wrangler deploy -c wrangler.deploy.jsonc --env production"
+  },
+  "dependencies": {
+    "@cloudflare/workers-oauth-provider": "1.2.3",
+    "@hono/zod-openapi": "1.6.3",
+    "@modelcontextprotocol/sdk": "1.32.1",
+    "hono": "4.13.13",
+    "isbot": "5.2.2",
+    "ua-parser-js": "2.0.10",
+    "ulid": "3.0.2",
+    "zod": "4.6.7"
+  },
+  "devDependencies": {
+    "@cloudflare/vitest-plugin": "1.6.0",
+    "@cloudflare/workers-types": "5.20261104.1",
+    "@fontsource-variable/bricolage-grotesque": "5.3.0",
+    "@fontsource-variable/instrument-sans": "5.3.0",
+    "@phosphor-icons/react": "2.1.10",
+    "@playwright/test": "1.64.0",
+    "@tailwindcss/vite": "4.3.3",
+    "@tanstack/react-query": "5.104.2",
+    "@tanstack/react-router": "1.170.42",
+    "@types/d3-geo": "3.1.1",
+    "@types/node": "24.19.2",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "@types/topojson-client": "3.1.5",
+    "@vitejs/plugin-react": "6.1.2",
+    "axe-core": "4.14.0",
+    "clsx": "2.1.1",
+    "country-flag-icons": "1.6.20",
+    "d3-geo": "3.1.1",
+    "esbuild": "0.28.2",
+    "eslint": "10.12.0",
+    "i18n-iso-countries": "7.14.0",
+    "jsdom": "30.1.2",
+    "prettier": "3.9.10",
+    "radix-ui": "1.6.7",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "simple-icons": "16.36.0",
+    "tailwindcss": "4.3.3",
+    "topojson-client": "3.1.0",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.71.2",
+    "uplot": "1.6.32",
+    "vite": "8.3.4",
+    "vitest": "4.1.12",
+    "world-atlas": "2.0.2",
+    "wrangler": "4.158.0"
+  },
+  "overrides": {
+    "minimatch": "11.0.5"
+  }
+}

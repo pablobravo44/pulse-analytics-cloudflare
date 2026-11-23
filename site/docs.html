@@ -1,0 +1,412 @@
+<!doctype html>
+<html lang="en" data-lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Pulse Documentation — Install, Tracker, MCP &amp; REST API</title>
+  <meta name="description" content="Complete technical documentation for Pulse Analytics on Cloudflare: 1-click deploy, AI agent runbook, 2.3 KB tracker, 83-tool MCP server, and 108-endpoint OpenAPI 3.1 REST API.">
+  <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./styles.css">
+  <script src="./app.js"></script>
+</head>
+<body class="docs-body">
+  <a class="skip" href="#content">Skip to content</a>
+
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="topbar-left">
+        <button type="button" class="menu-btn" data-menu-toggle aria-label="Toggle documentation navigation" aria-expanded="false">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+        <a class="brand" href="./index.html">
+          <img src="./assets/favicon.svg" alt="" width="26" height="26">
+          <span>Pulse</span>
+          <span class="brand-pill">Docs</span>
+        </a>
+        <nav class="topnav" aria-label="Primary navigation">
+          <a href="./index.html"><span data-lang="en">Overview</span><span data-lang="es">Inicio</span></a>
+          <a href="./docs.html" aria-current="page"><span data-lang="en">Documentation</span><span data-lang="es">Documentación</span></a>
+          <a href="https://github.com/pablobravo44/pulse-analytics-cloudflare" target="_blank" rel="noopener noreferrer">GitHub</a>
+        </nav>
+      </div>
+      <div class="topbar-right">
+        <label class="filter-box">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+          <input type="search" data-filter placeholder="Filter docs…" data-placeholder-en="Filter docs…" data-placeholder-es="Filtrar docs…" aria-label="Filter docs">
+          <span class="filter-kbd" aria-hidden="true">/</span>
+        </label>
+        <div class="lang-toggle" role="group" aria-label="Language">
+          <button type="button" data-set-lang="en" aria-pressed="true">EN</button>
+          <button type="button" data-set-lang="es" aria-pressed="false">ES</button>
+        </div>
+        <button type="button" class="icon-btn" data-theme-toggle aria-label="Switch color theme" title="Switch color theme">
+          <svg class="moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+          <svg class="sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+        </button>
+        <a class="btn btn-cf btn-deploy-top" href="https://deploy.workers.cloudflare.com/?url=https://github.com/pablobravo44/pulse-analytics-cloudflare" target="_blank" rel="noopener noreferrer">
+          <span data-lang="en">Deploy</span>
+          <span data-lang="es">Desplegar</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <div class="sb-backdrop" data-nav-backdrop></div>
+
+  <div class="docs-shell">
+    <aside class="docs-sidebar" aria-label="Documentation index">
+      <div class="sb-group">
+        <div class="sb-title"><span data-lang="en">Getting started</span><span data-lang="es">Primeros pasos</span></div>
+        <ul class="sb-list">
+          <li><a class="sb-link" href="#quickstart"><span data-lang="en">1-Click Cloudflare Deploy</span><span data-lang="es">Deploy 1-Clic Cloudflare</span></a></li>
+          <li><a class="sb-link" href="#access"><span data-lang="en">Access &amp; Dashboard Login</span><span data-lang="es">Acceso y login web</span></a></li>
+          <li><a class="sb-link" href="#agent-setup"><span data-lang="en">Deploy with an AI Agent</span><span data-lang="es">Desplegar con agente IA</span></a></li>
+          <li><a class="sb-link" href="#custom-domain"><span data-lang="en">Custom Domain &amp; EU</span><span data-lang="es">Dominio propio y EU</span></a></li>
+        </ul>
+      </div>
+      <div class="sb-group">
+        <div class="sb-title"><span data-lang="en">Integration</span><span data-lang="es">Integración</span></div>
+        <ul class="sb-list">
+          <li><a class="sb-link" href="#tracker"><span data-lang="en">Tracker &amp; Events</span><span data-lang="es">Tracker y eventos</span></a></li>
+          <li><a class="sb-link" href="#mcp"><span data-lang="en">MCP Server (83 tools)</span><span data-lang="es">Servidor MCP (83 tools)</span></a></li>
+          <li><a class="sb-link" href="#rest-api"><span data-lang="en">REST API (108 endpoints)</span><span data-lang="es">API REST (108 endpoints)</span></a></li>
+          <li><a class="sb-link" href="#uptime"><span data-lang="en">Uptime, Alerts &amp; Reports</span><span data-lang="es">Uptime, alertas e informes</span></a></li>
+        </ul>
+      </div>
+      <div class="sb-group">
+        <div class="sb-title"><span data-lang="en">Operations</span><span data-lang="es">Operaciones</span></div>
+        <ul class="sb-list">
+          <li><a class="sb-link" href="#privacy"><span data-lang="en">Privacy &amp; Data Model</span><span data-lang="es">Privacidad y modelo de datos</span></a></li>
+          <li><a class="sb-link" href="#local-dev"><span data-lang="en">Local Development</span><span data-lang="es">Desarrollo local</span></a></li>
+        </ul>
+      </div>
+      <div class="sb-group">
+        <div class="sb-title"><span data-lang="en">Repository guides</span><span data-lang="es">Guías en el repositorio</span></div>
+        <ul class="sb-list">
+          <li><a class="sb-link" href="https://github.com/pablobravo44/pulse-analytics-cloudflare/blob/main/docs/AGENT-SETUP.md" target="_blank" rel="noopener noreferrer">docs/AGENT-SETUP.md</a></li>
+          <li><a class="sb-link" href="https://github.com/pablobravo44/pulse-analytics-cloudflare/blob/main/docs/SELF-HOSTING.md" target="_blank" rel="noopener noreferrer">docs/SELF-HOSTING.md</a></li>
+          <li><a class="sb-link" href="https://github.com/pablobravo44/pulse-analytics-cloudflare/blob/main/docs/MCP.md" target="_blank" rel="noopener noreferrer">docs/MCP.md</a></li>
+          <li><a class="sb-link" href="https://github.com/pablobravo44/pulse-analytics-cloudflare/blob/main/docs/API.md" target="_blank" rel="noopener noreferrer">docs/API.md</a></li>
+          <li><a class="sb-link" href="https://github.com/pablobravo44/pulse-analytics-cloudflare/blob/main/docs/OPERATIONS.md" target="_blank" rel="noopener noreferrer">docs/OPERATIONS.md</a></li>
+        </ul>
+      </div>
+    </aside>
+
+    <div class="docs-main-wrap">
+      <main id="content" class="docs-main">
+        <div class="filter-status" data-filter-status role="status" aria-live="polite">
+          <span data-filter-text></span>
+          <button type="button" class="btn" style="height:28px;padding:0 10px;font-size:12px" data-filter-clear>
+            <span data-lang="en">Clear</span><span data-lang="es">Limpiar</span>
+          </button>
+        </div>
+
+        <div class="docs-head">
+          <h1 data-lang="en">Pulse Documentation</h1>
+          <h1 data-lang="es">Documentación de Pulse</h1>
+          <p data-lang="en">Everything you need to deploy Pulse on Cloudflare, sign into the web UI, connect AI agents via MCP, install the 2.3 KB cookieless tracker, and query the OpenAPI 3.1 REST API.</p>
+          <p data-lang="es">Todo lo necesario para desplegar Pulse en Cloudflare, acceder al dashboard web, conectar agentes IA por MCP, instalar el tracker sin cookies de 2.3 KB y consultar la API REST OpenAPI 3.1.</p>
+        </div>
+
+        <!-- Section 1: Quickstart -->
+        <section data-filter-item>
+          <h2 id="quickstart"><span data-lang="en">1-Click Cloudflare Deploy</span><span data-lang="es">Despliegue en 1 clic en Cloudflare</span></h2>
+          <p data-lang="en">Pulse runs on a single Cloudflare Worker with D1, Queues, KV, and R2. Cloudflare's Deploy button automatically forks the repo, provisions all required storage bindings from <code>wrangler.jsonc</code>, applies SQL migrations, and deploys to <code>https://pulse.&lt;your-subdomain&gt;.workers.dev</code>.</p>
+          <p data-lang="es">Pulse corre en un único Cloudflare Worker con D1, Queues, KV y R2. El botón de despliegue de Cloudflare crea un fork del repo, provisiona automáticamente los recursos desde <code>wrangler.jsonc</code>, aplica las migraciones SQL y publica en <code>https://pulse.&lt;tu-subdominio&gt;.workers.dev</code>.</p>
+
+          <p><a class="btn btn-lg btn-cf" href="https://deploy.workers.cloudflare.com/?url=https://github.com/pablobravo44/pulse-analytics-cloudflare" target="_blank" rel="noopener noreferrer"><span data-lang="en">Deploy to Cloudflare Workers</span><span data-lang="es">Desplegar en Cloudflare Workers</span></a></p>
+
+          <div class="callout">
+            <p data-lang="en"><strong>Prerequisites:</strong> Cloudflare <strong>Workers Paid ($5/month)</strong> is required for Cloudflare Queues (ingest buffering) and 5-minute CPU limits on backup jobs. R2 (up to 10 GB) and Cloudflare Access (up to 50 users) are free.</p>
+            <p data-lang="es"><strong>Requisitos:</strong> hace falta <strong>Cloudflare Workers Paid ($5/mes)</strong> para Cloudflare Queues (buffer de ingesta) y el límite de 5 min de CPU de las copias de seguridad. R2 (hasta 10 GB) y Cloudflare Access (hasta 50 usuarios) son gratuitos.</p>
+          </div>
+
+          <p data-lang="en">Once deployed, verify your instance is live — every deployed Worker also exposes its own live documentation portal at <code>/docs</code>, <code>/docs/agents</code>, <code>/docs/api</code>, and <code>/llms.txt</code>:</p>
+          <p data-lang="es">Una vez desplegado, comprueba que responde — cada Worker desplegado también sirve su propio portal de docs en vivo en <code>/docs</code>, <code>/docs/agents</code>, <code>/docs/api</code> y <code>/llms.txt</code>:</p>
+          <div class="code-block">
+            <div class="code-head"><span class="code-lang">bash</span><button type="button" class="copy-btn" data-copy><span data-copy-label>Copy</span></button></div>
+            <pre tabindex="0"><code>curl -fsS https://pulse.&lt;your-subdomain&gt;.workers.dev/healthz
+# Expected: {"ok":true,"version":"0.1.0"}</code></pre>
+          </div>
+        </section>
+
+        <!-- Section 2: Access & Login -->
+        <section data-filter-item>
+          <h2 id="access"><span data-lang="en">Access &amp; Dashboard Login</span><span data-lang="es">Acceso y login al dashboard</span></h2>
+          <p data-lang="en">Pulse stores <strong>no passwords</strong>. The tracker, REST API, and MCP server work immediately with scoped API keys; the web dashboard uses free <strong>Cloudflare Access</strong> one-time email PINs guarding only <code>/auth/access</code>.</p>
+          <p data-lang="es">Pulse <strong>no almacena contraseñas</strong>. El tracker, la API REST y el servidor MCP funcionan al instante con API keys; el dashboard web usa códigos por correo de <strong>Cloudflare Access</strong> (plan gratuito) protegiendo únicamente <code>/auth/access</code>.</p>
+
+          <h3><span data-lang="en">1. Mint your first API key (MCP &amp; REST)</span><span data-lang="es">1. Genera tu primera API key (MCP y REST)</span></h3>
+          <div class="code-block">
+            <div class="code-head"><span class="code-lang">bash</span><button type="button" class="copy-btn" data-copy><span data-copy-label>Copy</span></button></div>
+            <pre tabindex="0"><code># Writes the key safely to git-ignored .data/keys.env (never printed to stdout)
+npm run admin -- key:create \
+  --name agent \
+  --scopes stats:read,sites:write,ops:write,annotations:write</code></pre>
+          </div>
+
+          <h3><span data-lang="en">2. Enable web dashboard sign-in (30s in Cloudflare Zero Trust)</span><span data-lang="es">2. Activa el inicio de sesión web (30s en Cloudflare Zero Trust)</span></h3>
+          <ol data-lang="en">
+            <li>Open <strong>Cloudflare Zero Trust</strong> → Settings → Authentication and ensure <strong>One-time PIN</strong> is enabled. Copy your team domain (<code>&lt;team&gt;.cloudflareaccess.com</code>).</li>
+            <li>Go to Access → Applications → <strong>Add an application → Self-hosted</strong>. Domain: your Pulse hostname, Path: <code>auth/access</code>. Add an Allow policy for your email(s).</li>
+            <li>Copy the <strong>Application Audience (AUD) Tag</strong>.</li>
+            <li>Set <code>ACCESS_TEAM_DOMAIN</code> and <code>ACCESS_AUD</code> as Worker variables (in Cloudflare Dashboard → Workers → pulse → Settings → Variables), and run:</li>
+          </ol>
+          <ol data-lang="es">
+            <li>Abre <strong>Cloudflare Zero Trust</strong> → Settings → Authentication y asegúrate de tener activo <strong>One-time PIN</strong>. Copia tu team domain (<code>&lt;team&gt;.cloudflareaccess.com</code>).</li>
+            <li>Ve a Access → Applications → <strong>Add an application → Self-hosted</strong>. Dominio: el host de tu Pulse, ruta: <code>auth/access</code>. Añade una política Allow para tu correo.</li>
+            <li>Copia el <strong>Application Audience (AUD) Tag</strong>.</li>
+            <li>Añade <code>ACCESS_TEAM_DOMAIN</code> y <code>ACCESS_AUD</code> en las variables del Worker (Workers → pulse → Settings → Variables) y ejecuta:</li>
+          </ol>
+          <div class="code-block">
+            <div class="code-head"><span class="code-lang">bash — Worker secrets</span><button type="button" class="copy-btn" data-copy><span data-copy-label>Copy</span></button></div>
+            <pre tabindex="0"><code># Owner emails (become owners on first sign-in)
+printf '%s' "you@example.com" | npx wrangler secret put ACCESS_EMAILS
+
+# Optional: 32-byte key to encrypt Slack/Discord/Telegram/ntfy/webhook secrets
+node -e "process.stdout.write(require('node:crypto').randomBytes(32).toString('base64'))" \
+  | npx wrangler secret put PULSE_SECRET_KEY</code></pre>
+          </div>
+        </section>
+
+        <!-- Section 3: AI Agent Setup -->
+        <section data-filter-item>
+          <h2 id="agent-setup"><span data-lang="en">Deploy &amp; Connect with an AI Agent</span><span data-lang="es">Desplegar y conectar con un agente IA</span></h2>
+          <p data-lang="en">The repository includes <a href="https://github.com/pablobravo44/pulse-analytics-cloudflare/blob/main/docs/AGENT-SETUP.md" target="_blank" rel="noopener noreferrer"><code>docs/AGENT-SETUP.md</code></a> — a complete idempotent playbook designed specifically for coding agents (Claude Code, Codex, Cursor). After a one-time <code>npx wrangler login</code>, the agent handles resource provisioning, deployment, MCP registration, inserting <code>&lt;script&gt;</code> tags into your websites, fixing CSP headers, verifying with <code>install_check</code>, and creating goals and uptime checks.</p>
+          <p data-lang="es">El repositorio incluye <a href="https://github.com/pablobravo44/pulse-analytics-cloudflare/blob/main/docs/AGENT-SETUP.md" target="_blank" rel="noopener noreferrer"><code>docs/AGENT-SETUP.md</code></a> — un runbook idempotente escrito para agentes (Claude Code, Codex, Cursor). Tras hacer <code>npx wrangler login</code> una sola vez, el agente se encarga de crear recursos, desplegar, conectar el MCP, insertar el <code>&lt;script&gt;</code> en tus webs, ajustar CSP, validar con <code>install_check</code> y crear objetivos y monitores.</p>
+
+          <div class="code-block" data-lang="en">
+            <div class="code-head"><span class="code-lang">prompt — English</span><button type="button" class="copy-btn" data-copy><span data-copy-label>Copy</span></button></div>
+            <pre tabindex="0"><code>Follow docs/AGENT-SETUP.md in this repo to deploy Pulse to my Cloudflare account at pulse.yourdomain.com (EU jurisdiction), connect Pulse MCP, and install + verify tracking and an uptime check for my websites: yourdomain.com (repo at ../my-site).</code></pre>
+          </div>
+          <div class="code-block" data-lang="es">
+            <div class="code-head"><span class="code-lang">prompt — Español</span><button type="button" class="copy-btn" data-copy><span data-copy-label>Copy</span></button></div>
+            <pre tabindex="0"><code>Sigue docs/AGENT-SETUP.md en este repo para desplegar Pulse en mi cuenta de Cloudflare en pulse.tudominio.com (jurisdicción EU), conectar el servidor MCP de Pulse, e instalar y verificar el tracker y una comprobación de disponibilidad en mis webs: tudominio.com (repo en ../mi-web).</code></pre>
+          </div>
+        </section>
+
+        <!-- Section 4: Custom Domain & EU -->
+        <section data-filter-item>
+          <h2 id="custom-domain"><span data-lang="en">Custom Domain &amp; EU Jurisdiction</span><span data-lang="es">Dominio propio y jurisdicción EU</span></h2>
+          <p data-lang="en">When you want a dedicated hostname (<code>pulse.yourdomain.com</code>), <code>workers_dev: false</code>, EU-pinned D1 &amp; R2 buckets, and Cloudflare Email Routing alerts, copy <code>.env.deploy.example</code> to <code>.env.deploy</code> (git-ignored) and use <code>npm run deploy:custom</code>:</p>
+          <p data-lang="es">Si prefieres dominio propio (<code>pulse.tudominio.com</code>), <code>workers_dev: false</code>, buckets D1 y R2 en la UE y alertas por Cloudflare Email Routing, copia <code>.env.deploy.example</code> a <code>.env.deploy</code> (ignorado por git) y ejecuta <code>npm run deploy:custom</code>:</p>
+          <div class="code-block">
+            <div class="code-head"><span class="code-lang">.env.deploy</span><button type="button" class="copy-btn" data-copy><span data-copy-label>Copy</span></button></div>
+            <pre tabindex="0"><code>PULSE_DOMAIN=pulse.yourdomain.com
+PULSE_D1_ID=00000000-0000-0000-0000-000000000000
+PULSE_KV_ID=0123456789abcdef0123456789abcdef
+PULSE_JURISDICTION=eu
+
+# Dashboard sign-in (Cloudflare Access)
+PULSE_ACCESS_TEAM_DOMAIN=your-team.cloudflareaccess.com
+PULSE_ACCESS_AUD=0123456789abcdef...</code></pre>
+          </div>
+          <div class="code-block">
+            <div class="code-head"><span class="code-lang">bash</span><button type="button" class="copy-btn" data-copy><span data-copy-label>Copy</span></button></div>
+            <pre tabindex="0"><code>npm run build
+npm run deploy:custom</code></pre>
+          </div>
+        </section>
+
+        <!-- Section 5: Tracker -->
+        <section data-filter-item>
+          <h2 id="tracker"><span data-lang="en">Tracker &amp; Events</span><span data-lang="es">Tracker y eventos</span></h2>
+          <p data-lang="en">Drop one deferred tag into your site's <code>&lt;head&gt;</code>. Pulse automatically collects pageviews (including SPA History transitions), engaged time, scroll depth, outbound clicks, file downloads, and Core Web Vitals (<code>LCP</code>, <code>INP</code>, <code>CLS</code>) — in <strong>2.3 KB gzipped</strong>.</p>
+          <p data-lang="es">Añade una etiqueta diferida en el <code>&lt;head&gt;</code> de tu web. Pulse recoge automáticamente páginas vistas (incluyendo navegación SPA), tiempo activo, profundidad de scroll, clics salientes, descargas y Core Web Vitals (<code>LCP</code>, <code>INP</code>, <code>CLS</code>) — en solo <strong>2.3 KB gzip</strong>.</p>
+
+          <div class="code-block">
+            <div class="code-head"><span class="code-lang">html</span><button type="button" class="copy-btn" data-copy><span data-copy-label>Copy</span></button></div>
+            <pre tabindex="0"><code>&lt;script defer src="https://pulse.yourdomain.com/p.js" data-site="your-site-id"&gt;&lt;/script&gt;</code></pre>
+          </div>
+
+          <h3><span data-lang="en">Script attributes</span><span data-lang="es">Atributos del script</span></h3>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th><span data-lang="en">Attribute</span><span data-lang="es">Atributo</span></th>
+                  <th><span data-lang="en">Default</span><span data-lang="es">Por defecto</span></th>
+                  <th><span data-lang="en">Behavior</span><span data-lang="es">Comportamiento</span></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td><code>data-site</code></td><td>required</td><td><span data-lang="en">Site ID created in Pulse.</span><span data-lang="es">ID del sitio creado en Pulse.</span></td></tr>
+                <tr><td><code>data-api</code></td><td>script origin</td><td><span data-lang="en">Custom ingest URL if proxying <code>/e</code>.</span><span data-lang="es">URL de ingesta personalizada si haces proxy de <code>/e</code>.</span></td></tr>
+                <tr><td><code>data-exclude</code></td><td>none</td><td><span data-lang="en">Comma-separated path globs skipped by the tracker (e.g. <code>"/admin/*"</code>).</span><span data-lang="es">Globs de rutas separados por comas que el tracker ignora (ej. <code>"/admin/*"</code>).</span></td></tr>
+                <tr><td><code>data-dev</code></td><td>false</td><td><span data-lang="en">Allow tracking on <code>localhost</code> / <code>127.0.0.1</code>.</span><span data-lang="es">Permitir envío desde <code>localhost</code> / <code>127.0.0.1</code>.</span></td></tr>
+                <tr><td><code>data-respect-dnt</code></td><td>false</td><td><span data-lang="en">Skip tracking when <code>navigator.doNotTrack === "1"</code>.</span><span data-lang="es">Omitir seguimiento si <code>navigator.doNotTrack === "1"</code>.</span></td></tr>
+                <tr><td><code>data-errors</code></td><td>false</td><td><span data-lang="en">Capture JS runtime errors &amp; unhandled promise rejections.</span><span data-lang="es">Capturar errores JS y promesas rechazadas sin capturar.</span></td></tr>
+                <tr><td><code>data-vitals</code></td><td>true</td><td><span data-lang="en">Set <code>"false"</code> to disable Core Web Vitals beacons.</span><span data-lang="es">Pon <code>"false"</code> para desactivar beacons de Core Web Vitals.</span></td></tr>
+                <tr><td><code>data-forms</code></td><td>false</td><td><span data-lang="en">Automatically send <code>form_submit</code> for untagged forms (field values never sent).</span><span data-lang="es">Envía <code>form_submit</code> automático en formularios sin etiquetar (nunca envía valores).</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h3><span data-lang="en">Declarative &amp; JS custom events</span><span data-lang="es">Eventos declarativos y por JavaScript</span></h3>
+          <div class="code-block">
+            <div class="code-head"><span class="code-lang">html + js</span><button type="button" class="copy-btn" data-copy><span data-copy-label>Copy</span></button></div>
+            <pre tabindex="0"><code>&lt;!-- Zero-JS event tagging --&gt;
+&lt;button data-pulse-event="signup" data-pulse-prop-plan="pro"&gt;Start free&lt;/button&gt;
+
+&lt;!-- Programmatic queue (works before p.js finishes loading) --&gt;
+&lt;script&gt;
+  window.pulse = window.pulse || function () { (window.pulse.q = window.pulse.q || []).push(arguments); };
+  pulse("purchase", { revenue: 49.9, currency: "EUR" });
+  pulse("404");
+  pulse.pageview("/virtual/checkout");
+&lt;/script&gt;</code></pre>
+          </div>
+          <p data-lang="en"><strong>Content-Security-Policy:</strong> add your Pulse origin to <code>script-src</code> (and <code>script-src-elem</code> if present) and <code>connect-src</code>. Ignore your own browser visits by opening your site once with <code>#pulse-ignore</code>.</p>
+          <p data-lang="es"><strong>Content-Security-Policy:</strong> añade el origen de tu Pulse a <code>script-src</code> (y <code>script-src-elem</code> si existe) y a <code>connect-src</code>. Para excluir tus propias visitas, abre tu web una vez con <code>#pulse-ignore</code>.</p>
+        </section>
+
+        <!-- Section 6: MCP Server -->
+        <section data-filter-item>
+          <h2 id="mcp"><span data-lang="en">MCP Server (83 Scoped Tools)</span><span data-lang="es">Servidor MCP (83 herramientas con scopes)</span></h2>
+          <p data-lang="en">Pulse exposes a stateless Streamable HTTP MCP server at <code>/mcp</code>. Agents only see tools granted by their key's scopes. Call <code>whoami</code> to inspect active scopes and sites, and <code>help { topic }</code> for full inline documentation.</p>
+          <p data-lang="es">Pulse expone un servidor MCP Streamable HTTP sin estado en <code>/mcp</code>. Cada agente solo ve las herramientas permitidas por los scopes de su clave. Llama a <code>whoami</code> para inspeccionar permisos y sitios, y a <code>help { topic }</code> para guías en línea.</p>
+
+          <div class="code-block">
+            <div class="code-head"><span class="code-lang">json — Cursor / VS Code / generic MCP client</span><button type="button" class="copy-btn" data-copy><span data-copy-label>Copy</span></button></div>
+            <pre tabindex="0"><code>{
+  "mcpServers": {
+    "pulse": {
+      "url": "https://pulse.yourdomain.com/mcp",
+      "headers": {
+        "Authorization": "Bearer pulse_sk_..."
+      }
+    }
+  }
+}</code></pre>
+          </div>
+
+          <h3><span data-lang="en">Scopes</span><span data-lang="es">Scopes y permisos</span></h3>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Scope</th>
+                  <th><span data-lang="en">Allows</span><span data-lang="es">Permite</span></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td><code>stats:read</code></td><td><span data-lang="en">All analytics reads, live traffic, insights, status checks, and install checks.</span><span data-lang="es">Todas las lecturas de analítica, tiempo real, insights, estado e <code>install_check</code>.</span></td></tr>
+                <tr><td><code>events:export</code></td><td><span data-lang="en">Stream raw events as CSV or NDJSON.</span><span data-lang="es">Exportar eventos brutos en streaming (CSV o NDJSON).</span></td></tr>
+                <tr><td><code>annotations:write</code></td><td><span data-lang="en">Create, edit, and delete chart annotations (including deploy markers).</span><span data-lang="es">Crear, editar y borrar anotaciones en gráficas (incluyendo deploys).</span></td></tr>
+                <tr><td><code>sites:write</code></td><td><span data-lang="en">Create, edit, and archive sites, goals, funnels, saved views, share links, and alerts.</span><span data-lang="es">Crear, editar y archivar sitios, objetivos, embudos, vistas, enlaces compartidos y alertas.</span></td></tr>
+                <tr><td><code>ops:write</code></td><td><span data-lang="en">Create, pause, and test uptime monitors, incidents, channels, and scheduled reports.</span><span data-lang="es">Gestionar y probar monitores de uptime, incidentes, canales de aviso e informes programados.</span></td></tr>
+                <tr><td><code>admin</code></td><td><span data-lang="en">Implies all scopes plus API keys (REST/UI only), users, purges, and backup settings.</span><span data-lang="es">Implica todos los scopes más API keys (solo REST/UI), usuarios, purgados y ajustes de backup.</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- Section 7: REST API -->
+        <section data-filter-item>
+          <h2 id="rest-api"><span data-lang="en">REST API (108 OpenAPI 3.1 Endpoints)</span><span data-lang="es">API REST (108 endpoints OpenAPI 3.1)</span></h2>
+          <p data-lang="en">Base URL: <code>https://pulse.yourdomain.com/api/v1</code> with header <code>Authorization: Bearer pulse_sk_…</code>. Every read endpoint is a preset over the composable <code>POST /sites/{site}/query</code> engine, returns an <code>ETag</code>, and shares a <strong>600 req/min</strong> rate limit per key. Inspect live OpenAPI 3.1 JSON at <code>/api/v1/openapi.json</code> or browse <code>/docs/api</code> on your instance.</p>
+          <p data-lang="es">URL base: <code>https://pulse.tudominio.com/api/v1</code> con cabecera <code>Authorization: Bearer pulse_sk_…</code>. Todos los endpoints de lectura son presets sobre <code>POST /sites/{site}/query</code>, devuelven <code>ETag</code> y comparten límite de <strong>600 req/min</strong> por clave. El esquema OpenAPI 3.1 vivo está en <code>/api/v1/openapi.json</code> y renderizado en <code>/docs/api</code>.</p>
+
+          <div class="code-block">
+            <div class="code-head"><span class="code-lang">bash — composable query</span><button type="button" class="copy-btn" data-copy><span data-copy-label>Copy</span></button></div>
+            <pre tabindex="0"><code>curl -X POST "https://pulse.yourdomain.com/api/v1/sites/my-site/query" \
+  -H "Authorization: Bearer $PULSE_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "metrics": ["visitors", "pageviews", "bounce_rate", "revenue"],
+    "dimensions": ["channel", "country"],
+    "filters": [["contains", "page", ["/pricing"]]],
+    "date_range": "28d",
+    "compare": "previous_period"
+  }'</code></pre>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr><th>Method</th><th>Endpoint</th><th><span data-lang="en">Purpose</span><span data-lang="es">Uso</span></th></tr>
+              </thead>
+              <tbody>
+                <tr><td><span class="method m-get">GET</span></td><td><code>/api/v1/</code></td><td><span data-lang="en">Key self-discovery: scopes, sites, and unlocked capabilities</span><span data-lang="es">Autodescubrimiento: scopes, sitios y capacidades activas</span></td></tr>
+                <tr><td><span class="method m-get">GET</span></td><td><code>/api/v1/sites/{site}/overview</code></td><td><span data-lang="en">Full dashboard payload in one D1 round trip</span><span data-lang="es">Todo el dashboard de un sitio en una sola consulta D1</span></td></tr>
+                <tr><td><span class="method m-post">POST</span></td><td><code>/api/v1/sites/{site}/query</code></td><td><span data-lang="en">Arbitrary metrics × dimensions × filters (<code>?format=csv</code> supported)</span><span data-lang="es">Consulta libre métricas × dimensiones × filtros (admite <code>?format=csv</code>)</span></td></tr>
+                <tr><td><span class="method m-post">POST</span></td><td><code>/api/v1/sites</code></td><td><span data-lang="en">Register a website and receive its ready-to-paste snippet</span><span data-lang="es">Registrar una web y recibir su snippet listo para pegar</span></td></tr>
+                <tr><td><span class="method m-get">GET</span></td><td><code>/api/v1/sites/{site}/install-check</code></td><td><span data-lang="en">Live HTML, CSP, and hit-drop installation diagnostics</span><span data-lang="es">Diagnóstico real de etiqueta, CSP y descartes de ingesta</span></td></tr>
+                <tr><td><span class="method m-post">POST</span></td><td><code>/api/v1/hooks/deploy</code></td><td><span data-lang="en">Idempotent CI webhook to add deploy annotations on charts</span><span data-lang="es">Webhook idempotente de CI para anotar deploys en gráficas</span></td></tr>
+                <tr><td><span class="method m-get">GET</span></td><td><code>/api/v1/ops/status</code></td><td><span data-lang="en">All uptime monitors, 90-day daily bars, incidents, and backups</span><span data-lang="es">Monitores de uptime, barras de 90 días, incidentes y backups</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- Section 8: Uptime & Alerts -->
+        <section data-filter-item>
+          <h2 id="uptime"><span data-lang="en">Uptime Checks, Alerts &amp; Reports</span><span data-lang="es">Uptime, alertas e informes programados</span></h2>
+          <ul data-lang="en">
+            <li><strong>7 Monitor kinds:</strong> <code>http</code> (status + keyword), <code>json</code> (path assertions &amp; freshness), <code>heartbeat</code> (secret ping URL <code>/hb/:token</code> for cron jobs), <code>d1_query</code> (read-only SQL health check), <code>pulse_ingest</code> (adaptive silence detection), <code>dns</code>, and <code>domain_expiry</code>.</li>
+            <li><strong>Traffic alert rules:</strong> <code>above</code>, <code>below</code>, <code>change_pct</code> (vs same window last week), <code>no_data</code>, <code>event</code>, and <code>new_error</code>.</li>
+            <li><strong>Notification channels:</strong> Cloudflare Email Routing, Slack, Discord, Telegram, ntfy, and HMAC-signed webhooks (secrets encrypted with <code>PULSE_SECRET_KEY</code>).</li>
+            <li><strong>Scheduled reports:</strong> weekly or monthly email/chat digests across chosen sites with live HTML preview inside the dashboard.</li>
+          </ul>
+          <ul data-lang="es">
+            <li><strong>7 tipos de monitor:</strong> <code>http</code> (estado y palabra clave), <code>json</code> (aserciones por ruta y frescura), <code>heartbeat</code> (URL secreta <code>/hb/:token</code> para crons), <code>d1_query</code> (SELECT de solo lectura), <code>pulse_ingest</code> (silencio adaptativo), <code>dns</code> y <code>domain_expiry</code>.</li>
+            <li><strong>Reglas de alerta de tráfico:</strong> <code>above</code>, <code>below</code>, <code>change_pct</code> (vs misma franja la semana anterior), <code>no_data</code>, <code>event</code> y <code>new_error</code>.</li>
+            <li><strong>Canales de notificación:</strong> Cloudflare Email Routing, Slack, Discord, Telegram, ntfy y webhooks firmados por HMAC (secretos cifrados con <code>PULSE_SECRET_KEY</code>).</li>
+            <li><strong>Informes programados:</strong> resúmenes semanales o mensuales por correo o chat con vista previa HTML en el dashboard.</li>
+          </ul>
+        </section>
+
+        <!-- Section 9: Privacy -->
+        <section data-filter-item>
+          <h2 id="privacy"><span data-lang="en">Privacy &amp; Data Model</span><span data-lang="es">Privacidad y modelo de datos</span></h2>
+          <ul data-lang="en">
+            <li><strong>Daily visitor hashing:</strong> <code>visitor_id = HMAC(daily_salt, site | IP | user_agent)</code>. Salts rotate per site's local day and are deleted within 48 h; raw IP addresses are never written to D1, queues, or logs.</li>
+            <li><strong>Sessions &amp; bounces:</strong> hits separated by &lt; 30 minutes form one session; a single pageview with &lt; 10s engaged time counts as a bounce.</li>
+            <li><strong>Retention &amp; backups:</strong> raw events remain for each site's retention window (default 25 months) before compacting into daily rollups. Weekly gzipped backups stream to your own R2 bucket.</li>
+          </ul>
+          <ul data-lang="es">
+            <li><strong>Hash diario de visitante:</strong> <code>visitor_id = HMAC(sal_diaria, sitio | IP | user_agent)</code>. Las sales rotan según el día local de cada sitio y se borran en ≤ 48 h; la IP nunca se guarda en D1, colas ni logs.</li>
+            <li><strong>Sesiones y rebotes:</strong> impactos separados por &lt; 30 min forman una sesión; una sola vista con &lt; 10 s activos cuenta como rebote.</li>
+            <li><strong>Retención y backups:</strong> los eventos brutos se conservan durante la retención del sitio (25 meses por defecto) antes de compactarse en rollups diarios. Copias semanales comprimidas en tu propio bucket R2.</li>
+          </ul>
+        </section>
+
+        <!-- Section 10: Local Development -->
+        <section data-filter-item>
+          <h2 id="local-dev"><span data-lang="en">Local Development &amp; Testing</span><span data-lang="es">Desarrollo local y tests</span></h2>
+          <p data-lang="en">Pulse runs locally in Node 22+ (including Windows, without needing <code>workerd</code>) using <code>node:sqlite</code> behind a D1 shim:</p>
+          <p data-lang="es">Pulse corre en local en Node 22+ (incluido Windows, sin depender de <code>workerd</code>) usando <code>node:sqlite</code> tras un shim de D1:</p>
+          <div class="code-block">
+            <div class="code-head"><span class="code-lang">bash</span><button type="button" class="copy-btn" data-copy><span data-copy-label>Copy</span></button></div>
+            <pre tabindex="0"><code>npm ci
+npm run build
+npm run dev:seed     # 3 demo sites + 120 days of traffic + annotations + monitors
+npm run dev          # API on :8787 + Vite HMR dashboard on :5173
+# Open http://localhost:8787/__dev/login
+
+# Full verification suite
+npm run typecheck &amp;&amp; npm run lint &amp;&amp; npm test &amp;&amp; npm run tracker:size &amp;&amp; npm run build</code></pre>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <aside class="toc-rail" aria-label="On this page">
+      <div class="toc-title"><span data-lang="en">On this page</span><span data-lang="es">En esta página</span></div>
+      <ul class="toc-list">
+        <li><a class="toc-link" href="#quickstart"><span data-lang="en">1-Click Deploy</span><span data-lang="es">Deploy 1-Clic</span></a></li>
+        <li><a class="toc-link" href="#access"><span data-lang="en">Access &amp; Login</span><span data-lang="es">Acceso y login</span></a></li>
+        <li><a class="toc-link" href="#agent-setup"><span data-lang="en">AI Agent Setup</span><span data-lang="es">Setup con agente IA</span></a></li>
+        <li><a class="toc-link" href="#custom-domain"><span data-lang="en">Custom Domain &amp; EU</span><span data-lang="es">Dominio propio y EU</span></a></li>
+        <li><a class="toc-link" href="#tracker"><span data-lang="en">Tracker &amp; Events</span><span data-lang="es">Tracker y eventos</span></a></li>
+        <li><a class="toc-link" href="#mcp"><span data-lang="en">MCP Server</span><span data-lang="es">Servidor MCP</span></a></li>
+        <li><a class="toc-link" href="#rest-api"><span data-lang="en">REST API</span><span data-lang="es">API REST</span></a></li>
+        <li><a class="toc-link" href="#uptime"><span data-lang="en">Uptime &amp; Alerts</span><span data-lang="es">Uptime y alertas</span></a></li>
+        <li><a class="toc-link" href="#privacy"><span data-lang="en">Privacy</span><span data-lang="es">Privacidad</span></a></li>
+        <li><a class="toc-link" href="#local-dev"><span data-lang="en">Local Development</span><span data-lang="es">Desarrollo local</span></a></li>
+      </ul>
+    </aside>
+  </div>
+</body>
+</html>
