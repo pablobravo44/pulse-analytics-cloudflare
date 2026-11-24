@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="134" height="20" role="img" aria-label="Tracker: 2.3 KB gzip">
+  <title>Tracker: 2.3 KB gzip</title>
+  <clipPath id="r"><rect width="134" height="20" rx="3" fill="#fff"/></clipPath>
+  <g clip-path="url(#r)">
+    <rect width="56" height="20" fill="#24292e"/>
+    <rect x="56" width="78" height="20" fill="#108f62"/>
+  </g>
+  <g fill="#ffffff" text-anchor="middle" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="11">
+    <text x="28" y="14">Tracker</text>
+    <text x="95" y="14" font-weight="600">2.3 KB gzip</text>
+  </g>
+</svg>

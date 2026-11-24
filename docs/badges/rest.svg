@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="134" height="20" role="img" aria-label="REST: 108 endpoints">
+  <title>REST: 108 endpoints</title>
+  <clipPath id="r"><rect width="134" height="20" rx="3" fill="#fff"/></clipPath>
+  <g clip-path="url(#r)">
+    <rect width="44" height="20" fill="#24292e"/>
+    <rect x="44" width="90" height="20" fill="#c24d00"/>
+  </g>
+  <g fill="#ffffff" text-anchor="middle" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="11">
+    <text x="22" y="14">REST</text>
+    <text x="89" y="14" font-weight="600">108 endpoints</text>
+  </g>
+</svg>

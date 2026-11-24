@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="136" height="20" role="img" aria-label="Website &amp; Docs: Live">
+  <title>Website &amp; Docs: Live</title>
+  <clipPath id="r"><rect width="136" height="20" rx="3" fill="#fff"/></clipPath>
+  <g clip-path="url(#r)">
+    <rect width="98" height="20" fill="#24292e"/>
+    <rect x="98" width="38" height="20" fill="#7357f6"/>
+  </g>
+  <g fill="#ffffff" text-anchor="middle" font-family="Verdana,Geneva,DejaVu Sans,sans-serif" font-size="11">
+    <text x="49" y="14">Website &amp; Docs</text>
+    <text x="117" y="14" font-weight="600">Live</text>
+  </g>
+</svg>

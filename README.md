@@ -15,12 +15,12 @@ No cookie banners. No third-party data brokers. No per-pageview SaaS tiers. Just
 </p>
 
 <p>
-  <a href="https://pablobravo44.github.io/pulse-analytics-cloudflare/"><img src="https://img.shields.io/badge/Website_%26_Docs-Live-7357f6?style=for-the-badge" alt="Website & Docs" /></a>
-  <a href="https://github.com/pablobravo44/pulse-analytics-cloudflare/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/pablobravo44/pulse-analytics-cloudflare/ci.yml?branch=main&style=for-the-badge&label=CI" alt="CI status" /></a>
-  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-0b9da4?style=for-the-badge" alt="MIT License" /></a>
-  <img src="https://img.shields.io/badge/Tracker-2.3_KB_gzip-108f62?style=for-the-badge" alt="Tracker 2.3 KB gzip" />
-  <img src="https://img.shields.io/badge/MCP-83_tools-3e7bfa?style=for-the-badge" alt="83 MCP tools" />
-  <img src="https://img.shields.io/badge/REST-108_endpoints-d2700a?style=for-the-badge" alt="108 REST endpoints" />
+  <a href="https://pablobravo44.github.io/pulse-analytics-cloudflare/"><img src="docs/badges/docs.svg" alt="Website & Docs" height="20" /></a>
+  <a href="https://github.com/pablobravo44/pulse-analytics-cloudflare/actions/workflows/ci.yml"><img src="https://github.com/pablobravo44/pulse-analytics-cloudflare/actions/workflows/ci.yml/badge.svg?branch=main" alt="CI status" height="20" /></a>
+  <a href="LICENSE"><img src="docs/badges/license.svg" alt="MIT License" height="20" /></a>
+  <img src="docs/badges/tracker.svg" alt="Tracker 2.3 KB gzip" height="20" />
+  <img src="docs/badges/mcp.svg" alt="83 MCP tools" height="20" />
+  <img src="docs/badges/rest.svg" alt="108 REST endpoints" height="20" />
 </p>
 
 <p>
